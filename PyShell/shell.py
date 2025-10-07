@@ -56,7 +56,7 @@ class Shell:
                 continue
             cmd_name, *arg_strings = parts
             if cmd_name == self.help_command:
-                print("Available commands:\n -", "\n -".join(self.COMMANDS.keys()))
+                print("Available commands:\n -", "\n - ".join(self.COMMANDS.keys()))
                 break
             if cmd_name not in self.COMMANDS:
                 print(self.unknown_cmd_dialog)
