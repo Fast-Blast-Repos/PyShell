@@ -8,15 +8,30 @@ class Shell:
                  prompt: str =">>> ",
                  help_command: str ="help",
                  exit_command: str ="exit",
+                 set_command: str = "set",
                  exit_dialog: str ="Exiting PyShell...",
                  unknown_cmd_dialog: str ="Unknown command."):
         self.COMMANDS = {}
+        self.variables = {}
         self.motd = motd
         self.prompt = prompt
         self.help_command = help_command
         self.exit_command = exit_command
+        self.set_command = set_command
         self.exit_dialog = exit_dialog
         self.unknown_cmd_dialog = unknown_cmd_dialog
+
+        self.COMMANDS[self.set_command] = self._set_var
+
+    def expand_vars(self, text: str) -> str:
+        def repl(match):
+            name = match.group(1)
+            return self.variables.get(name, f"${name}")
+        return re.sub(r"\$(\w+)", repl, text)
+
+    def _set_var(self, name: str, value: str):
+        self.variables[name] = value
+        return f"{name} = {value}"
 
     def command(self, *, aliases: list =None):
         if aliases is None:
@@ -47,6 +62,8 @@ class Shell:
                 print(f"Error: {e}")
     
     def execute_line(self, user_input: str):
+        user_input = self.expand_vars(user_input)
+
         input_parts = [part.strip() for part in user_input.split("|")]
         commands = [shlex.split(part) for part in input_parts]
         input_data = None
