@@ -1,6 +1,7 @@
 import readline
 import inspect
 import shlex
+import re
 
 class Shell:
     def __init__(self,
